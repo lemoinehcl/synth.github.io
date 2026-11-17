@@ -19,13 +19,6 @@ function noteToHz(n) {
   return 440 * Math.pow(2, (midi - 69) / 12);
 }
 
-function noteToHz(n) {
-  const m = n.match(/^([A-G]#?)(-?\d+)$/);
-  if (!m) return 440;
-  const midi = (parseInt(m[2]) + 1) * 12 + NOTE_NAMES[m[1]];
-  return 440 * Math.pow(2, (midi - 69) / 12);
-}
-
 function renderNote(freq, dur, opts, sampleRate = 44100, applyADSR = true) {
   const n = Math.floor(dur * sampleRate);
   const out = new Float32Array(n);
@@ -134,14 +127,14 @@ function renderNote(freq, dur, opts, sampleRate = 44100, applyADSR = true) {
 
 function playNote(audioCtx, freq, dur, opts, destinationNode) {
   if (!audioCtx) return;
-  const samples = renderNote(freq, dur, opts);
-  const buf = audioCtx.createBuffer(1, samples.length, 44100);
+  
+  const sampleRate = audioCtx.sampleRate; 
+  const samples = renderNote(freq, dur, opts, sampleRate);
+  const buf = audioCtx.createBuffer(1, samples.length, sampleRate);
   buf.copyToChannel(samples, 0);
   
   const src = audioCtx.createBufferSource();
   src.buffer = buf;
-  
-  // Connect to the master gain node (which routes to the compressor -> speakers)
   src.connect(destinationNode || audioCtx.destination);
   src.start();
 }

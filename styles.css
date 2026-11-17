@@ -362,7 +362,7 @@ pre {
 .synth-visuals .keyboard {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 @media (max-width: 850px) {
@@ -439,5 +439,16 @@ pre {
     }
     .about-grid .image-col {
         order: 2;
+    }
+}
+
+@media (max-width: 850px) {
+    .keyboard-wrapper {
+        overflow-x: auto;
+        padding-bottom: 1rem;
+        justify-content: flex-start;
+    }
+    .keyboard {
+        margin: 0 auto;
     }
 }

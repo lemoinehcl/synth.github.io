@@ -193,9 +193,18 @@ let compressor = null;
 document.getElementById('unlock').addEventListener('click', () => {
     if (!ctx) {
         ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+        if (ctx && ctx.sampleRate) {
+            const buffer = ctx.createBuffer(1, 1, 22050);
+            const source = ctx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(ctx.destination);
+            source.start(0);
+        }
         
         masterGain = ctx.createGain();
-        masterGain.gain.value = 0.3;
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        masterGain.gain.value = isMobile ? 0.8 : 0.3; 
         
         compressor = ctx.createDynamicsCompressor();
         compressor.threshold.value = -10;
