@@ -192,6 +192,19 @@ let compressor = null;
 
 document.getElementById('unlock').addEventListener('click', () => {
     if (!ctx) {
+        try {
+            if (navigator.audioSession) {
+                navigator.audioSession.type = 'playback';
+            }
+        } catch (e) { /* silent fail */ }
+
+
+        try {
+            const silence = new Audio();
+            silence.src = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+            silence.play().catch(() => {});
+        } catch (e) { /* silent fail */ }
+
         ctx = new (window.AudioContext || window.webkitAudioContext)();
 
         if (ctx && ctx.sampleRate) {
