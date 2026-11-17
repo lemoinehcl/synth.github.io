@@ -10,10 +10,9 @@ const NOTE_NAMES = {
 };
 
 function noteToHz(n) {
-  // Updated regex to accept 'b' for flats: ([A-G][#b]?)
   const m = n.match(/^([A-G][#b]?)(-?\d+)$/);
   if (!m) {
-      console.warn("Could not parse note:", n); // Helpful for debugging
+      console.warn("Could not parse note:", n);
       return 440;
   }
   const midi = (parseInt(m[2]) + 1) * 12 + NOTE_NAMES[m[1]];
@@ -32,7 +31,6 @@ function renderNote(freq, dur, opts, sampleRate = 44100, applyADSR = true) {
   const out = new Float32Array(n);
   const { waves, amps, mults, phases, fmRatios, fmIndices, adsr, sustain, vset } = opts;
 
-  // Initialize state for noise filters (each oscillator gets its own state)
   const noiseStates = waves.map(w => {
     if (w === 'pink') return { b0:0, b1:0, b2:0, b3:0, b4:0, b5:0, b6:0 };
     if (w === 'brown') return { lastOut: 0 };
@@ -49,7 +47,7 @@ function renderNote(freq, dur, opts, sampleRate = 44100, applyADSR = true) {
       let s = 0;
 
       if (waveType === 'white' || waveType === 'pink' || waveType === 'brown') {
-        // Generate base white noise
+        // --- Noise ---
         const white = Math.random() * 2 - 1;
         
         if (waveType === 'white') {
@@ -65,12 +63,11 @@ function renderNote(freq, dur, opts, sampleRate = 44100, applyADSR = true) {
           st.b5 = -0.7616  * st.b5 - white * 0.0168980;
           s = st.b0 + st.b1 + st.b2 + st.b3 + st.b4 + st.b5 + st.b6 + white * 0.5362;
           st.b6 = white * 0.115926;
-          s *= 0.11; // Normalization scaling
+          s *= 0.11;
         } else if (waveType === 'brown') {
-          // Brown noise (integrated white noise)
           const st = noiseStates[w];
           st.lastOut = (st.lastOut + (0.02 * white)) / 1.02;
-          s = st.lastOut * 3.5; // Normalization scaling
+          s = st.lastOut * 3.5;
         }
       } else {
         // --- Pitched Oscillators ---
@@ -105,7 +102,6 @@ function renderNote(freq, dur, opts, sampleRate = 44100, applyADSR = true) {
   for (let i = 0; i < n; i++) peak = Math.max(peak, Math.abs(out[i]));
   if (peak > 0) for (let i = 0; i < n; i++) out[i] /= peak;
 
-  // Optional wavefolder
   if (vset < 1) {
     for (let i = 0; i < n; i++) {
       const ph = (((out[i] + vset) / (4 * vset)) % 1 + 1) % 1;

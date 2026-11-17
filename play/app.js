@@ -1,7 +1,6 @@
 // app.js
 let ctx = null; 
 
-// We'll build this dynamically now
 let currentPreset = {
     waves: [], amps: [], mults: [], phases: [], fmRatios: [], fmIndices: [],
     adsr: [0.001, 0.3, 0.4, 0.299],
@@ -9,7 +8,6 @@ let currentPreset = {
     vset: 1.0
 };
 
-// --- 1. CANVAS SETUP & DRAWING ---
 const canvas = document.getElementById('waveform');
 const cctx = canvas.getContext('2d');
 
@@ -55,7 +53,6 @@ function updatePresetFromUI() {
     currentPreset.fmIndices = [];
     
     document.querySelectorAll('.osc-row').forEach(row => {
-        // Skip if the oscillator is turned off
         if (row.classList.contains('disabled')) return;
         
         currentPreset.waves.push(row.querySelector('.osc-wave').value);
@@ -66,7 +63,6 @@ function updatePresetFromUI() {
         currentPreset.fmIndices.push(parseFloat(row.querySelector('.osc-fm-depth').value));
     });
     
-    // If all oscillators are off, default to one silent sine so it doesn't crash
     if (currentPreset.waves.length === 0) {
         currentPreset.waves.push('sin');
         currentPreset.amps.push(0);
@@ -83,24 +79,20 @@ function toggleWaveParams(selectEl) {
     const row = selectEl.closest('.osc-row');
     const isNoise = ['white', 'pink', 'brown'].includes(selectEl.value);
     
-    // Pitch, phase, and FM don't affect noise, so we disable them
     row.querySelector('.osc-mult').disabled = isNoise;
     row.querySelector('.osc-phase').disabled = isNoise;
     row.querySelector('.osc-fm-ratio').disabled = isNoise;
     row.querySelector('.osc-fm-depth').disabled = isNoise;
 }
 
-// Bind buttons and sliders inside the oscillator rows
 document.querySelectorAll('.osc-row').forEach(row => {
-    // 1. Handle Wave Selection (Noise vs Pitched)
     const waveSelect = row.querySelector('.osc-wave');
     waveSelect.addEventListener('change', (e) => {
         toggleWaveParams(e.target);
         updatePresetFromUI();
     });
-    toggleWaveParams(waveSelect); // Call once on load for initial state
+    toggleWaveParams(waveSelect);
 
-    // 2. Toggle On/Off
     const btn = row.querySelector('.toggle-btn');
     btn.addEventListener('click', () => {
         row.classList.toggle('disabled');
@@ -108,14 +100,11 @@ document.querySelectorAll('.osc-row').forEach(row => {
         updatePresetFromUI();
     });
     
-    // 3. Listen for slider changes
     row.querySelectorAll('input, select').forEach(input => {
         input.addEventListener('input', () => {
-            // Update the number next to the slider label
             if (input.type === 'range') {
                 const valOutput = input.closest('label').querySelector('.osc-val');
                 if (valOutput) {
-                    // Phase is a whole number, others get 2 decimals
                     if (input.classList.contains('osc-phase')) {
                         valOutput.textContent = input.value;
                     } else {
@@ -153,7 +142,6 @@ bindSlider('s-time',  'st-out', 'sustain_time', 2);
 bindSlider('sustain', 's-out', 'sustain', -1);
 bindSlider('release', 'r-out', 'release',       3);
 
-// Initialize the preset on page load
 updatePresetFromUI();
 
 // --- WAVEFOLDER LOGIC ---
@@ -165,10 +153,8 @@ wfToggle.addEventListener('change', () => {
     vsetSlider.disabled = !wfToggle.checked;
     
     if (wfToggle.checked) {
-        // Enable wavefolder using the current slider value
         currentPreset.vset = parseFloat(vsetSlider.value);
     } else {
-        // Disable wavefolder (vset = 1.0 means no folding)
         currentPreset.vset = 1.0;
     }
     drawWaveform(); 
@@ -181,7 +167,7 @@ vsetSlider.addEventListener('input', () => {
     drawWaveform();
 });
 
-// --- 4. KEYBOARD & AUDIO (Same as before) ---
+// --- 4. KEYBOARD & AUDIO ---
 const NOTES = ['C4','C#4','D4','D#4','E4','F4','F#4','G4','G#4','A4','A#4','B4','C5'];
 const kb = document.getElementById('keyboard');
 NOTES.forEach(n => {
@@ -191,9 +177,13 @@ NOTES.forEach(n => {
     el.dataset.note = n;
     
     el.addEventListener('mousedown', () => {
-        if (!ctx) return; 
+        if (!ctx) { 
+            alert('Please click "Enable Audio" first!'); 
+            return; 
+        }
         playNote(ctx, noteToHz(n), 1.2, currentPreset, masterGain);
     });
+    
     kb.appendChild(el);
 });
 
@@ -204,19 +194,16 @@ document.getElementById('unlock').addEventListener('click', () => {
     if (!ctx) {
         ctx = new (window.AudioContext || window.webkitAudioContext)();
         
-        // 1. Create a Master Gain (turns the overall volume down to leave headroom)
         masterGain = ctx.createGain();
-        masterGain.gain.value = 0.3; // 30% volume. Adjust this if it's too quiet/loud.
+        masterGain.gain.value = 0.3;
         
-        // 2. Create a Compressor (acts as a safety limiter)
         compressor = ctx.createDynamicsCompressor();
-        compressor.threshold.value = -10; // Start compressing at -10dB
+        compressor.threshold.value = -10;
         compressor.knee.value = 10;
-        compressor.ratio.value = 12;      // Hard limit
-        compressor.attack.value = 0.003;  // Fast attack catches the peaks
+        compressor.ratio.value = 12;
+        compressor.attack.value = 0.003;
         compressor.release.value = 0.25;
         
-        // 3. Route the audio: Notes -> Master Gain -> Compressor -> Speakers
         masterGain.connect(compressor);
         compressor.connect(ctx.destination);
         
@@ -233,7 +220,6 @@ let playbackTimeout = null;
 const scoreSelect = document.getElementById('score-select');
 const playBtn = document.getElementById('play-score');
 
-// Helper function to stop playback safely
 function stopPlayback() {
     activeSources.forEach(src => {
         try { src.stop(); } catch(e) {} 
@@ -245,21 +231,18 @@ function stopPlayback() {
     playBtn.textContent = "▶ Play Excerpt";
 }
 
-// If they change the dropdown while it's playing, stop the music
 scoreSelect.addEventListener('change', () => {
     if (isPlaying) stopPlayback();
 });
 
 playBtn.addEventListener('click', async () => {
     if (!ctx) { alert('Click "Enable Audio" first.'); return; }
-    
-    // 1. If it's already playing, stop it
+
     if (isPlaying) {
         stopPlayback();
         return;
     }
 
-    // 2. Otherwise, start playing the selected score
     isPlaying = true;
     playBtn.textContent = "⏹ Stop";
 
@@ -274,8 +257,6 @@ playBtn.addEventListener('click', async () => {
 
         for (const n of notes) {
             const notesToPlay = Array.isArray(n.name) ? n.name : [n.name];
-            
-            // NEW: Calculate how many notes are in this chord
             const numNotes = notesToPlay.length; 
             
             for (const noteName of notesToPlay) {
@@ -288,9 +269,7 @@ playBtn.addEventListener('click', async () => {
                 src.buffer = buf;
                 
                 const noteGain = ctx.createGain();
-                
-                // NEW: Scale the volume. A 2-note chord is turned down to 0.707.
-                // A 1-note melody stays at 1.0.
+    
                 noteGain.gain.value = 1.0 / Math.sqrt(numNotes); 
                 
                 noteGain.connect(masterGain);
@@ -302,8 +281,6 @@ playBtn.addEventListener('click', async () => {
                 activeSources.push(noteGain);
             }
         }
-
-        // 3. Reset the button when the piece finishes naturally
         const lastNote = notes[notes.length - 1];
         const totalDuration = (lastNote.start + lastNote.dur + 1.0) * 1000;
         
@@ -327,7 +304,6 @@ async function initPresets() {
         const res = await fetch('play/presets.json');
         availablePresets = await res.json();
         
-        // --- FIX: Convert list of objects to a dictionary if needed ---
         if (Array.isArray(availablePresets)) {
             const dict = {};
             availablePresets.forEach(p => {
@@ -338,7 +314,6 @@ async function initPresets() {
 
         const select = document.getElementById('preset-select');
         
-        // Populate the dropdown
         for (const name in availablePresets) {
             const opt = document.createElement('option');
             opt.value = name;
@@ -347,7 +322,6 @@ async function initPresets() {
             select.appendChild(opt);
         }
 
-        // Listen for changes
         select.addEventListener('change', (e) => {
             if (e.target.value) {
                 applyPresetToUI(availablePresets[e.target.value]);
@@ -360,17 +334,14 @@ async function initPresets() {
 
 function applyPresetToUI(preset) {
     const rows = document.querySelectorAll('.osc-row');
-    
-    // 1. Turn off all oscillators first
+
     rows.forEach(r => {
         r.classList.add('disabled');
         r.querySelector('.toggle-btn').textContent = 'OFF';
     });
 
-    // 2. Load oscillators (up to 4)
     const nOsc = Math.min(preset.waves.length, 4);
     
-    // Helper to set a slider and its text output
     const setSlider = (row, cssClass, val, isPhase) => {
         const input = row.querySelector(cssClass);
         if (!input) return;
@@ -387,18 +358,14 @@ function applyPresetToUI(preset) {
         const waveSelect = row.querySelector('.osc-wave');
         waveSelect.value = preset.waves[i];
         
-        // NEW: Disable FM/Phase sliders if the loaded preset uses noise
         toggleWaveParams(waveSelect); 
         
-        // Use fallbacks (||) in case the JSON doesn't have these arrays
         setSlider(row, '.osc-amp',      preset.amps ? preset.amps[i] : 1.0, false);
         setSlider(row, '.osc-phase',    preset.phases ? preset.phases[i] : 0, true);
         setSlider(row, '.osc-mult',     preset.mults ? preset.mults[i] : 1.0, false);
         setSlider(row, '.osc-fm-ratio', preset.fm_ratios ? preset.fm_ratios[i] : 0, false);
         setSlider(row, '.osc-fm-depth', preset.fm_indices ? preset.fm_indices[i] : 0, false);
     }
-
-    // 3. Load ADSR
     if (preset.adsr_vals) {
         const setEnv = (id, outId, val) => {
             document.getElementById(id).value = val;
@@ -414,34 +381,28 @@ function applyPresetToUI(preset) {
         document.getElementById('s-out').textContent = parseFloat(preset.sustain_val).toFixed(2);
     }
 
-    // 4. Load Wavefolder
     const wfToggle = document.getElementById('wavefolder-toggle');
     const vsetSlider = document.getElementById('vset');
     const vsetOut = document.getElementById('vset-out');
     
-    // Check if the preset explicitly has clip: true OR vset < 1.0
     const isClipped = preset.clip === true || (preset.vset !== undefined && preset.vset < 1.0);
     
     if (isClipped) {
         wfToggle.checked = true;
         vsetSlider.disabled = false;
         
-        // Default to 0.8 if clip is true but no vset is provided
         const vsetVal = preset.vset !== undefined ? preset.vset : 0.8;
         vsetSlider.value = vsetVal;
         vsetOut.textContent = parseFloat(vsetVal).toFixed(2);
         
-        // CRITICAL FIX: Manually update the engine's currentPreset
         currentPreset.vset = parseFloat(vsetVal);
     } else {
         wfToggle.checked = false;
         vsetSlider.disabled = true;
         
-        // CRITICAL FIX: Disable the wavefolder in the engine
         currentPreset.vset = 1.0;
     }
 
-    // 5. Update the engine and redraw
     updatePresetFromUI(); 
 }
 // --- MIDI KEYBOARD SUPPORT ---
@@ -452,19 +413,16 @@ document.getElementById('connect-midi').addEventListener('click', async () => {
     }
 
     try {
-        // 1. Request access to MIDI devices
         const midiAccess = await navigator.requestMIDIAccess();
         const btn = document.getElementById('connect-midi');
         btn.textContent = '🎹 MIDI Connected';
         btn.disabled = true;
 
-        // 2. Find all available MIDI inputs
         const inputs = midiAccess.inputs.values();
         let hasDevice = false;
 
         for (let input = inputs.next(); input && !input.done; input = inputs.next()) {
             hasDevice = true;
-            // 3. Attach a listener to each device
             input.value.onmidimessage = onMIDIMessage;
             console.log(`Listening to MIDI input: ${input.value.name}`);
         }
@@ -480,17 +438,14 @@ document.getElementById('connect-midi').addEventListener('click', async () => {
 });
 
 // --- MIDI VOICE MANAGEMENT ---
-const activeVoices = {};   // midiNote -> { src, gain, releaseTime }
+const activeVoices = {};
 
 function midiToHz(n) { return 440 * Math.pow(2, (n - 69) / 12); }
 
 function startMidiVoice(noteNumber, velocity) {
     if (!ctx) return;
-    
-    // If this note is already sounding, kill it first (re-strike)
     if (activeVoices[noteNumber]) stopMidiVoice(noteNumber);
     
-    // Render 5 seconds of raw waveform (no ADSR)
     const rawSamples = renderNote(midiToHz(noteNumber), 2.0, currentPreset, 44100, false);
     const buf = ctx.createBuffer(1, rawSamples.length, 44100);
     buf.copyToChannel(rawSamples, 0);
@@ -499,15 +454,13 @@ function startMidiVoice(noteNumber, velocity) {
     src.buffer = buf;
     
     const gain = ctx.createGain();
-    gain.gain.value = 0;          // start silent; we ramp from here
+    gain.gain.value = 0;
     src.connect(gain);
     gain.connect(masterGain);
-    
-    // Velocity → target peak (leave headroom)
+
     const vel = Math.max(velocity / 127, 0.05);
     const targetPeak = vel * 0.8;
     
-    // Convert ADSR fractions to absolute seconds (1s reference)
     const [a, d, s, r] = currentPreset.adsr;
     const sum = (a + d + s + r) || 1.0;
     const attackT  = (a / sum) * 1.0;
@@ -534,7 +487,6 @@ function stopMidiVoice(noteNumber) {
     voice.gain.gain.setValueAtTime(voice.gain.gain.value, now);
     voice.gain.gain.linearRampToValueAtTime(0, now + voice.releaseTime);
     
-    // Stop the source after the release finishes
     voice.src.stop(now + voice.releaseTime + 0.05);
     delete activeVoices[noteNumber];
 }
@@ -549,14 +501,11 @@ function onMIDIMessage(event) {
         return;
     }
     
-    // Note On (velocity > 0)
     if (command === 0x90 && velocity > 0) {
         startMidiVoice(noteNumber, velocity);
     }
-    // Note Off — either explicit Note Off (0x80) OR Note On with velocity 0
     else if (command === 0x80 || (command === 0x90 && velocity === 0)) {
         stopMidiVoice(noteNumber);
     }
 }
-// Start the loader on page load
 initPresets();

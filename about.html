@@ -14,8 +14,6 @@
         <a href="index.html">Back to Synthesizer</a>
     </div>
 
-    <!-- <p>This project bridges a Python-based audio analysis engine with a real-time JavaScript Web Audio interface.</p> -->
-
     <!-- SECTION 1: OSCILLATORS -->
     <div class="about-grid">
         <div class="about-column text-col">
@@ -159,7 +157,7 @@
         </div>
     </div>
 
-    <!-- SECTION 5: PRESETS -->
+    <!-- SECTION 5: READ SCORE -->
     <div class="about-grid">
         <div class="about-column text-col">
             <h2>Score Parsing</h2>
@@ -183,11 +181,9 @@
     <script>
     const toggleBtn = document.getElementById('theme-toggle');
     
-    // 1. Check local storage or system preference
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    // 2. Set initial theme
     if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
         document.documentElement.setAttribute('data-theme', 'dark');
         toggleBtn.textContent = '☀️ Light Mode';
@@ -195,7 +191,7 @@
         document.documentElement.setAttribute('data-theme', 'light');
         toggleBtn.textContent = '🌙 Dark Mode';
     }
-            // 3. Toggle function
+  
     toggleBtn.addEventListener('click', () => {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
