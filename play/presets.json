@@ -1,0 +1,189 @@
+{
+  "sine": {
+    "waves": ["sin"],
+    "amps": [1.0],
+    "mults": [1.0],
+    "adsr_vals": [0.05, 0.15, 0.45, 0.35],
+    "sustain_val": 0.8
+  },
+  "synth": {
+    "waves": ["saw", "tri", "sin", "sin"],
+    "amps": [0.45, 0.3, 0.2, 0.1],
+    "mults": [1.0, 1.0, 2.0, 0.5],
+    "adsr_vals": [0.1, 0.2, 0.4, 0.3],
+    "sustain_val": 0.8
+  },
+  "electric_piano": {
+    "waves": ["sin", "sin", "sin", "sin"],
+    "amps": [1.0, 0.15, 1.0, 0.15],
+    "fm_ratios": [0.0, 14.0, 0.0, 14.0],
+    "fm_indices": [0.0, 0.3, 0.0, 0.3],
+    "adsr_vals": [0.001, 0.6, 0.1, 0.299],
+    "sustain_val": 0.6
+  },
+  "tubular_bell": {
+    "waves": ["sin", "sin"],
+    "amps": [1.0, 0.5],
+    "fm_ratios": [0, 2.76],
+    "fm_indices": [0, 4.0],
+    "adsr_vals": [0.001, 0.3, 0.05, 0.649],
+    "sustain_val": 0.2
+  },
+  "marimba": {
+    "waves": ["sin", "sin"],
+    "amps": [1.0, 0.4],
+    "fm_ratios": [0, 4.0],
+    "fm_indices": [0, 2.5],
+    "adsr_vals": [0.001, 0.15, 0.05, 0.799],
+    "sustain_val": 0.1
+  },
+  "music_box": {
+    "waves": ["sin", "sin", "sin"],
+    "mults": [1.0, 3.0, 6.0],
+    "amps": [1.0, 0.3, 0.15],
+    "adsr_vals": [0.001, 0.1, 0.05, 0.849],
+    "sustain_val": 0.05
+  },
+  "steel_drum": {
+    "waves": ["sin", "sin", "sin"],
+    "mults": [1.0, 2.76, 5.4],
+    "amps": [1.0, 0.5, 0.2],
+    "adsr_vals": [0.001, 0.2, 0.1, 0.699],
+    "sustain_val": 0.05
+  },
+  "harpsichord": {
+    "waves": ["saw", "squ"],
+    "mults": [1.0, 2.0],
+    "amps": [1.0, 0.5],
+    "adsr_vals": [0.001, 0.1, 0.059, 0.84],
+    "sustain_val": 0.05
+  },
+  "organ": {
+    "waves": ["sin", "sin", "sin", "sin"],
+    "mults": [1.0, 2.0, 3.0, 4.0],
+    "amps": [1.0, 0.5, 0.33, 0.25],
+    "adsr_vals": [0.05, 0.05, 0.85, 0.05],
+    "sustain_val": 1.0
+  },
+  "brass": {
+    "waves": ["sin", "sin"],
+    "amps": [1.0, 0.6],
+    "fm_ratios": [0, 1.0],
+    "fm_indices": [0, 2.0],
+    "adsr_vals": [0.1, 0.15, 0.5, 0.25],
+    "sustain_val": 0.8
+  },
+  "strings": {
+    "waves": ["saw", "saw", "saw"],
+    "mults": [1.0, 1.003, 0.997],
+    "phases": [0, 90, 180],
+    "adsr_vals": [0.15, 0.15, 0.6, 0.1],
+    "sustain_val": 0.8
+  },
+  "edm": {
+    "waves": ["saw", "saw", "saw", "saw", "saw", "saw", "saw"],
+    "mults": [0.995, 0.998, 1.0, 1.0, 1.002, 1.005, 1.01],
+    "phases": [0, 37, 73, 0, 109, 146, 180],
+    "adsr_vals": [0.1, 0.2, 0.5, 0.2],
+    "sustain_val": 0.8
+  },
+  "scifi": {
+    "waves": ["saw", "saw", "saw", "sin"],
+    "mults": [1.0, 1.007, 0.993, 0.5],
+    "amps": [1.0, 1.0, 1.0, 0.5],
+    "phases": [0, 120, 240, 0],
+    "adsr_vals": [0.4, 0.1, 0.4, 0.1],
+    "sustain_val": 0.9
+  },
+  "evil": {
+    "waves": ["squ", "squ"],
+    "fm_ratios": [0, 5.5],
+    "fm_indices": [0, 0.05],
+    "adsr_vals": [0.05, 0.1, 0.7, 0.15],
+    "sustain_val": 0.9
+  },
+  "wahwah": {
+    "waves": ["sin", "sin", "sin", "sin"],
+    "amps": [1.0, 0.7, 1.0, 0.5],
+    "fm_ratios": [0, 6.0, 0, 9.0],
+    "fm_indices": [0, 1.5, 0, 1.0],
+    "adsr_vals": [0.05, 0.1, 0.7, 0.15],
+    "sustain_val": 0.8
+  },
+  "theremin": {
+    "waves": ["sin", "sin"],
+    "amps": [1.0, 1.0],
+    "fm_ratios": [0, 5.5],
+    "fm_indices": [0, 0.08],
+    "adsr_vals": [0.2, 0.1, 0.5, 0.2],
+    "sustain_val": 0.9
+  },
+  "pluck": {
+    "waves": ["saw", "squ"],
+    "amps": [0.8, 0.4],
+    "adsr_vals": [0.001, 0.4, 0.1, 0.499],
+    "sustain_val": 0.1
+  },
+  "choir": {
+    "waves": ["sin", "tri", "saw"],
+    "amps": [1.0, 0.4, 0.2],
+    "fm_ratios": [0, 5.5, 0],
+    "fm_indices": [0, 0.1, 0],
+    "adsr_vals": [0.3, 0.2, 0.4, 0.1],
+    "sustain_val": 0.8
+  },
+  "bass_sub": {
+    "waves": ["sin"],
+    "mults": [0.5],
+    "adsr_vals": [0.01, 0.2, 0.7, 0.09],
+    "sustain_val": 0.9
+  },
+  "horror": {
+    "waves": ["saw", "saw", "tri"],
+    "mults": [1.0, 1.414, 2.0],
+    "amps": [1.0, 0.8, 0.4],
+    "phases": [0, 90, 45],
+    "adsr_vals": [0.6, 0.1, 0.2, 0.1],
+    "sustain_val": 0.8
+  },
+  "glass": {
+    "waves": ["sin", "sin"],
+    "amps": [1.0, 0.3],
+    "fm_ratios": [0, 17.0],
+    "fm_indices": [0, 0.8],
+    "adsr_vals": [0.001, 0.2, 0.1, 0.699],
+    "sustain_val": 0.3
+  },
+  "wobble": {
+    "waves": ["sin", "sin"],
+    "amps": [1.0, 0.8],
+    "fm_ratios": [0, 0.25],
+    "fm_indices": [0, 5.0],
+    "adsr_vals": [0.01, 0.2, 0.7, 0.09],
+    "sustain_val": 0.8
+  },
+  "bell": {
+    "waves": ["sin", "sin", "sin", "sin"],
+    "mults": [1.0, 2.76, 5.40, 8.93],
+    "amps": [1.0, 0.5, 0.3, 0.15],
+    "adsr_vals": [0.005, 0.2, 0.15, 0.645],
+    "sustain_val": 0.5
+  },
+  "beep_boop": {
+  "waves":      ["saw", "saw"],
+  "amps":       [1.0, 0.8],
+  "mults":      [1.0, 1.001],
+  "adsr_vals":  [0.002, 0.1, 0.5, 0.398],
+  "sustain_val": 0.7,
+  "clip":       true,
+  "vset":       0.25
+  },
+  "guitar": {
+  "waves":      ["saw", "saw", "sin"],
+  "amps":       [0.6, 0.6, 0.25],
+  "mults":      [1.0, 1.004, 2.0],
+  "phases":     [0, 90, 0],
+  "adsr_vals":  [0.003, 0.25, 0.15, 0.597],
+  "sustain_val": 0.4
+  } 
+}

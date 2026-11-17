@@ -1,0 +1,5 @@
+numpy
+scipy
+librosa
+music21
+matplotlib

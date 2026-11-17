@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Synthesizer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-btn">🌙 Dark Mode</button>
+
+    <h1>Synthesizer</h1>
+    <div class="header-links">
+        <a href="about.html">How It Works</a>
+        <a href="https://github.com/lemoinehcl/synth.github.io">View Source Code on GitHub</a>
+    </a>
+    </div>
+
+    <p>Click a key to hear the piano in real time, or play an excerpt of a piece. (MIDI connection may only work for Chrome and Edge browsers)</p>
+
+    <div class="synth-layout">
+        <div class="synth-controls">
+            <div style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                <label for="preset-select" style="font-weight: bold;">Load Preset:</label>
+                <select id="preset-select" style="padding: 0.5rem; border-radius: 4px; font-size: 1rem;">
+                    <option value="">-- Custom --</option>
+                </select>
+            </div>
+        
+        <div id="oscillators">
+        <!-- OSCILLATOR 1 -->
+        <div class="osc-row" id="osc-0">
+            <button class="toggle-btn">ON</button>
+            <select class="osc-wave">
+                <option value="sin">Sine</option>
+                <option value="squ">Square</option>
+                <option value="tri">Triangle</option>
+                <option value="saw">Saw</option>
+                <option value="white">White Noise</option>
+                <option value="pink">Pink Noise</option>
+                <option value="brown">Brown Noise</option>
+            </select>
+                <label><span>Amp <output class="osc-val">1.00</output></span><input type="range" class="osc-amp" min="0" max="1" step="0.05" value="1.0"></label>
+                <label><span>Phase <output class="osc-val">0</output></span><input type="range" class="osc-phase" min="0" max="360" step="1" value="0"></label>
+                <div style="flex-basis: 100%; height: 0; margin: 0; padding: 0;"></div>
+                <label><span>Mult <output class="osc-val">1.00</output></span><input type="range" class="osc-mult" min="0.5" max="8" step="0.1" value="1.0"></label>
+                <label><span>FM Ratio <output class="osc-val">1.00</output></span><input type="range" class="osc-fm-ratio" min="0" max="20" step="0.1" value="1.0"></label>
+                <label><span>FM Depth <output class="osc-val">0.00</output></span><input type="range" class="osc-fm-depth" min="0" max="10" step="0.1" value="0"></label>
+        </div>
+
+        <!-- OSCILLATOR 2 -->
+        <div class="osc-row" id="osc-1">
+            <button class="toggle-btn">ON</button>
+            <select class="osc-wave">
+                <option value="sin" selected>Sine</option>
+                <option value="squ">Square</option>
+                <option value="tri">Triangle</option>
+                <option value="saw">Saw</option>
+                <option value="white">White Noise</option>
+                <option value="pink">Pink Noise</option>
+                <option value="brown">Brown Noise</option>
+            </select>
+                <label><span>Amp <output class="osc-val">0.50</output></span><input type="range" class="osc-amp" min="0" max="1" step="0.05" value="0.50"></label>
+                <label><span>Phase <output class="osc-val">0</output></span><input type="range" class="osc-phase" min="0" max="360" step="1" value="0"></label>
+                <div style="flex-basis: 100%; height: 0; margin: 0; padding: 0;"></div>
+                <label><span>Mult <output class="osc-val">1.00</output></span><input type="range" class="osc-mult" min="0.5" max="8" step="0.1" value="1.0"></label>
+                <label><span>FM Ratio <output class="osc-val">4.00</output></span><input type="range" class="osc-fm-ratio" min="0" max="20" step="0.1" value="4.0"></label>
+                <label><span>FM Depth <output class="osc-val">1.30</output></span><input type="range" class="osc-fm-depth" min="0" max="10" step="0.1" value="1.3"></label>
+        </div>
+
+        <!-- OSCILLATOR 3 -->
+        <div class="osc-row disabled" id="osc-2">
+            <button class="toggle-btn">OFF</button>
+            <select class="osc-wave">
+                <option value="sin">Sine</option>
+                <option value="squ">Square</option>
+                <option value="tri">Triangle</option>
+                <option value="saw">Saw</option>
+                <option value="white">White Noise</option>
+                <option value="pink">Pink Noise</option>
+                <option value="brown">Brown Noise</option>
+            </select>
+                <label><span>Amp <output class="osc-val">1.00</output></span><input type="range" class="osc-amp" min="0" max="1" step="0.05" value="1.0"></label>
+                <label><span>Phase <output class="osc-val">0</output></span><input type="range" class="osc-phase" min="0" max="360" step="1" value="0"></label>
+                <div style="flex-basis: 100%; height: 0; margin: 0; padding: 0;"></div>
+                <label><span>Mult <output class="osc-val">1.00</output></span><input type="range" class="osc-mult" min="0.5" max="8" step="0.1" value="1.0"></label>
+                <label><span>FM Ratio <output class="osc-val">1.00</output></span><input type="range" class="osc-fm-ratio" min="0" max="20" step="0.1" value="1.0"></label>
+                <label><span>FM Depth <output class="osc-val">0.00</output></span><input type="range" class="osc-fm-depth" min="0" max="10" step="0.1" value="0"></label>
+        </div>
+
+        <!-- OSCILLATOR 4 -->
+        <div class="osc-row disabled" id="osc-3">
+            <button class="toggle-btn">OFF</button>
+            <select class="osc-wave">
+                <option value="sin">Sine</option>
+                <option value="squ">Square</option>
+                <option value="tri">Triangle</option>
+                <option value="saw">Saw</option>
+                <option value="white">White Noise</option>
+                <option value="pink">Pink Noise</option>
+                <option value="brown">Brown Noise</option>
+            </select>
+                <label><span>Amp <output class="osc-val">1.00</output></span><input type="range" class="osc-amp" min="0" max="1" step="0.05" value="1.0"></label>
+                <label><span>Phase <output class="osc-val">0</output></span><input type="range" class="osc-phase" min="0" max="360" step="1" value="0"></label>
+                <div style="flex-basis: 100%; height: 0; margin: 0; padding: 0;"></div>
+                <label><span>Mult <output class="osc-val">1.00</output></span><input type="range" class="osc-mult" min="0.5" max="8" step="0.1" value="1.0"></label>
+                <label><span>FM Ratio <output class="osc-val">1.00</output></span><input type="range" class="osc-fm-ratio" min="0" max="20" step="0.1" value="1.0"></label>
+                <label><span>FM Depth <output class="osc-val">0.00</output></span><input type="range" class="osc-fm-depth" min="0" max="10" step="0.1" value="0"></label>
+            </div>  
+            </div>
+            
+            <div class="controls">
+                <label>Attack</label>        <input type="range" id="attack"  min="0.001" max="1"   step="0.001" value="0.001"> <output id="a-out">0.001</output>
+                <label>Decay</label>         <input type="range" id="decay"   min="0.01"  max="1"   step="0.01"  value="0.3">   <output id="d-out">0.30</output>
+                <label>Sustain Time</label>  <input type="range" id="s-time"  min="0.0"   max="0.95" step="0.01" value="0.4">   <output id="st-out">0.40</output>
+                <label>Sustain Level</label> <input type="range" id="sustain" min="0.05"  max="0.95" step="0.05" value="0.6">   <output id="s-out">0.60</output>
+                <label>Release</label>       <input type="range" id="release" min="0.001" max="1"   step="0.001" value="0.3">   <output id="r-out">0.30</output>
+            </div>
+
+            <div class="controls" style="grid-template-columns: 120px 1fr 50px; align-items: center;">
+                <label style="display: flex; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="wavefolder-toggle" style="width: 1.2rem; height: 1.2rem;">
+                Wavefolder
+                </label>
+                <!-- Slider starts disabled until the checkbox is checked -->
+                <input type="range" id="vset" min="0.05" max="1.0" step="0.05" value="0.4" disabled> 
+                <output id="vset-out">0.40</output>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: VISUALS -->
+        <div class="synth-visuals">
+            <div style="display: flex; justify-content: center; gap: 10px; margin-top: 1rem;">
+                <button id="unlock" style="flex: 1; max-width: 240px; padding: 0.5rem 1rem; cursor: pointer; font-weight: bold;">
+                    🔊 Enable Audio
+                </button>
+
+                <button id="connect-midi" style="flex: 1; max-width: 240px; padding: 0.5rem 1rem; cursor: pointer; font-weight: bold;">
+                    🎹 Connect MIDI Keyboard
+                </button>
+            </div>
+
+            <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem; flex-wrap: wrap;">
+                <select id="score-select" style="padding: 0.5rem; font-size: 1rem; flex: 1;">
+                <option value="turkish_march">Turkish March (Mozart)</option>
+                <option value="fur_elise">Für Elise (Beethoven)</option>
+                <option value="bach_prelude">Prelude in C Major (Bach)</option>
+                <option value="nocturne">Nocturne (Chopin)</option>
+                <option value="maple_leaf_rag">Maple Leaf Rag (Joplin)</option>
+            </select>
+        
+            <button id="play-score">▶ Play Excerpt</button>
+
+            <div style="text-align: center; font-size: 0.8rem; color: var(--text-main); margin-bottom: 8px;">
+                Waveform Preview (15 Hz base frequency)
+            </div>
+            <canvas id="waveform" width="400" height="200"></canvas>
+    </div>
+            
+            <div class="keyboard" id="keyboard" style="margin-top: 1.5rem;"></div>
+        </div>
+        
+
+    </div>
+
+    <script src="play/synth.js"></script>
+    <script src="play/app.js"></script>
+
+    <script>
+        const toggleBtn = document.getElementById('theme-toggle');
+        
+        // 1. Check local storage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        // 2. Set initial theme
+        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            toggleBtn.textContent = '☀️ Light Mode';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            toggleBtn.textContent = '🌙 Dark Mode';
+        }
+                // 3. Toggle function
+        toggleBtn.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            toggleBtn.textContent = newTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+        });
+    </script>
+
+</body>
+</html>

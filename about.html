@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <button id="theme-toggle" class="theme-btn">🌙 Dark Mode</button>
+
+    <h1>About the Synthesizer</h1>
+    <div class="header-links">
+        <a href="index.html">Back to Synthesizer</a>
+    </div>
+
+    <!-- <p>This project bridges a Python-based audio analysis engine with a real-time JavaScript Web Audio interface.</p> -->
+
+    <!-- SECTION 1: OSCILLATORS -->
+    <div class="about-grid">
+        <div class="about-column text-col">
+            <h2>Oscillators</h2>
+            <p>
+                This synth supports up to 4 oscillators. Each oscillator can generate <span style="color: #1f77b4">Sine</span>, <span style="color: #ff7f0e">Square</span>, <span style="color: #2ca02c">Sawtooth</span>, or <span style="color: #d62728">Triangle</span> waves, as well as <span style="color:#9467bd">White</span>, Pink, and Brown Noise.
+                <br><br>Each oscillator has 5 adjustable parameters:
+                <ul>
+                    <li><strong><span style="color: #1f77b4">Amp</span></strong>: The amplitude of the wave relative to the others. All waves are normalized to have a maximum amplitude of 1.0 to avoid clipping.</li>
+                    <li><strong><span style="color: #ff7f0e">Phase</span></strong>: The phase of the wave in degrees, between 0&deg; and 360&deg;.</li>
+                    <li><strong><span style="color: #2ca02c">Mult</span></strong>: A constant that adjusts the frequency of the wave. At 2.0, the wave has twice the base frequency, increasing the pitch by about an octave.</li>
+                    <li><strong><span style="color: #d62728">FM Ratio</span></strong>: Determines how fast the modulator wave moves relative to the carrier wave.</li>
+                    <li><strong><span style="color:#9467bd">FM Depth</span></strong>: Dictates how much the modulator pushes the carrier wave off course.</li>
+                </ul>
+            </p>
+        </div>
+        <div class="about-column image-col">
+            <figure>
+                <img src="images/oscs.png" alt="Possible Oscillators" class="about-img">
+                <figcaption>All 4 pitched oscillators and their FFT spectra, using a 10 Hz base frequency.</figcaption>
+            </figure>
+        </div> 
+    </div>
+
+    <!-- SECTION 2: FM SYNTHESIS -->
+    <div class="about-grid">
+        <div class="about-column image-col">
+            <figure>
+                <img src="images/fm_idx.png" alt="Adjusting the fm_depth on a sine wave" class="about-img">
+                <figcaption>A Sine wave of frequency 10 Hz with FM Ratio of 1.0 and increasing FM Depth. The red line on the FFT spectrum shows the base frequency.</figcaption>
+            </figure>
+        </div>
+        <div class="about-column text-col">
+            <h2>Frequency Modulation Synthesis</h2>
+            <p>
+                The <span style="color: #d62728">FM Ratio</span> and <span style="color:#9467bd">FM Depth</span> adjust the Frequency Modulation of the wave. In FM Synthesis, the frequency of one waveform, the carrier, is altered by a second, modulating, waveform.
+                <br><br>In this synth, the FM synthesis is implemented as Phase Modulation:
+            </p>
+            <pre style="overflow-x: auto;"><code>carrier_phase = (2 * π * frequency * time) + (<span style="color:#9467bd">depth</span> * sin(2 * π * (frequency * <span style="color: #d62728">ratio</span>) * time))</code></pre>
+            <p>
+                The <span style="color: #d62728">FM Ratio</span> determines the character of the new harmonics. Integer ratios will have the modulating wave finish its cycle at the same time as the carrier wave, producing harmonic sidebands. For non-integer ratios, the modulating wave drifts in and out of sync with the carrier wave, creating inharmonic sidebands. This creates a metallic or chaotic sound.
+                <br><br>The <span style="color:#9467bd">FM Depth</span>  determines how much the carrier wave is impacted. A FM Depth of 1.0-3.0 gently pushes on the carrier wave, causing a more rich tone. At a value between 5.0 and 10.0, the wave is pushed much harder, causing it to run backwards at times. This creates a harsh and noisy sound.
+            </p>
+        </div>
+    </div>
+
+    <!-- SECTION 3: WAVEFOLDER -->
+    <div class="about-grid">
+        <div class="about-column text-col">
+            <h2>Wavefolder</h2>
+            <p>
+                Instead of hard clipping the wave, which cuts off the peaks, the wavefolder uses a periodic reflection formula:
+            </p>
+            <pre style="overflow-x: auto;"><code>signal_out = (((signal_in + <span style="color: #2ca02c;">threshold</span>) / (4 * <span style="color: #2ca02c;">threshold</span>)) % 1 + 1) % 1</code></pre>
+            <p>
+                This is similar to a piecewise function, where:
+            </p>
+            <div style="overflow-x: auto;">
+                <math display="block">
+                    <msub><mi>V</mi><mrow><mi>o</mi><mi>u</mi><mi>t</mi></mrow></msub>
+                    <mo>=</mo>
+                    <mrow>
+                        <mo>{</mo>
+                        <mtable columnalign="left left">
+                        <mtr>
+                            <mtd>
+                            <mn>2</mn><mo>(</mo><mtext mathcolor="#2ca02c">threshold</mtext><mo>)</mo>
+                            <mo>−</mo>
+                            <msub><mi>V</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub>
+                            </mtd>
+                            <mtd>
+                            <mtext>if&#xA0;</mtext>
+                            <msub><mi>V</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub>
+                            <mo>&gt;</mo>
+                            <mo>+</mo><mtext mathcolor="#2ca02c">threshold</mtext>
+                            </mtd>
+                        </mtr>
+                        <mtr>
+                            <mtd>
+                            <msub><mi>V</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub>
+                            </mtd>
+                            <mtd>
+                            <mtext>if&#xA0;</mtext>
+                            <mo>+</mo><mtext mathcolor="#2ca02c">threshold</mtext>
+                            <mo>&gt;</mo>
+                            <msub><mi>V</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub>
+                            <mo>&gt;</mo>
+                            <mo>−</mo><mtext mathcolor="#2ca02c">threshold</mtext>
+                            </mtd>
+                        </mtr>
+                        <mtr>
+                            <mtd>
+                            <mo>−</mo><mn>2</mn><mo>(</mo><mtext mathcolor="#2ca02c">threshold</mtext><mo>)</mo>
+                            <mo>−</mo>
+                            <msub><mi>V</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub>
+                            </mtd>
+                            <mtd>
+                            <mtext>if&#xA0;</mtext>
+                            <msub><mi>V</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub>
+                            <mo>&lt;</mo>
+                            <mo>−</mo><mtext mathcolor="#2ca02c">threshold</mtext>
+                            </mtd>
+                        </mtr>
+                        </mtable>
+                    </mrow>
+                </math>
+            </div>
+            <p>
+                Where Vin is the input amplitude, and Vout is the output amplitude. When the amplitude of a wave exceeds the <span style="color: #2ca02c;">threshold</span>, the wave is reflected back into the [<span style="color: #2ca02c;">-threshold</span>, <span style="color: #2ca02c;">+threshold</span>] range. This generates complex harmonics without distortion.
+            </p>
+        </div>
+        <div class="about-column image-col">
+            <figure>
+                <img src="images/clip.png" alt="Unfolded and folded wave" class="about-img">
+                <figcaption>A 10 Hz Sine wave, both unfolded and folded. The folded wave has a threshold of 0.5.</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <!-- SECTION 4: ADSR -->
+    <div class="about-grid">
+        <div class="about-column image-col">
+            <figure>
+                <img src="images/adsr.png" alt="ADSR modulation" class="about-img">
+                <figcaption>ADSR modulation of a 1 second long 25 Hz wave. The sustain level is set to 0.8.</figcaption>
+            </figure>
+        </div>
+        <div class="about-column text-col">
+            <h2>ADSR Envelope</h2>
+            <p>
+                The ADSR Envelope consists of 5 parts:
+                <ul>
+                    <li><strong><span style="color: #1f77b4">Attack</span></strong>: Time it takes for the sound to go from 0 to the maximum level</li>
+                    <li><strong><span style="color: #ff7f0e">Decay</span></strong>: Time it takes for the sound to fall from the initial peak to some set level.</li>
+                    <li><strong><span style="color: #2ca02c">Sustain Time</span></strong>: Time the sound is held at a set level.</li>
+                    <li><strong><span style="color: #2ca02c">Sustain Level</span></strong>: Amplitude the sound is held at.</li>
+                    <li><strong><span style="color: #d62728">Release</span></strong>: Time it takes for the sound to fade to silence.</li>
+                </ul>
+                For real-time keyboard and MIDI playback, the ADSR envelope is handled via a Web Audio GainNode. This allows for polyphony: when multiple keys are pressed, each voice independently scales its volume to prevent digital clipping, using an equal-power scaling formula.
+            </p>
+        </div>
+    </div>
+
+    <!-- SECTION 5: PRESETS -->
+    <div class="about-grid">
+        <div class="about-column text-col">
+            <h2>Score Parsing</h2>
+            <p>
+                The Python engine uses <code>music21</code> to parse MusicXML (.mxl), Humdrum (.krn), or RomanText (.rntxt) files. It extracts the notes, chords, and rests of the score as well as their start times, durations and dynamics. This can be fed into the ADSR to play full tracks, including complex scores with multiple parts and voices.  
+                <br>The Python script is used to extract sections of the score into .json files to be read by the JavaScript scripts. 
+            </p>
+        </div>
+        <div class="about-column image-col">
+            <figure>
+                <figcaption>Chopin Etude Op. 10, No. 9, using the "EDM" preset</figcaption>
+               <audio controls src="audio/etude-opus-10-no-9-in-f-minor.mp3"></audio>
+            </figure>
+            <figure>
+                <figcaption>Liliʻuokalani Aloha ʻOe, using the "Electric Piano" preset</figcaption>
+               <audio controls src="audio/aloha.mp3"></audio>
+            </figure>
+        </div>
+    </div>
+
+    <script>
+    const toggleBtn = document.getElementById('theme-toggle');
+    
+    // 1. Check local storage or system preference
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // 2. Set initial theme
+    if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        toggleBtn.textContent = '☀️ Light Mode';
+    } else {
+        document.documentElement.setAttribute('data-theme', 'light');
+        toggleBtn.textContent = '🌙 Dark Mode';
+    }
+            // 3. Toggle function
+    toggleBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        toggleBtn.textContent = newTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+    });
+    </script>
+
+</body>
+</html>
