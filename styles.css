@@ -49,13 +49,6 @@
 }
 
 /* Oscillator Grid */
-#oscillators {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
 .osc-row {
     display: flex;
     flex-wrap: wrap;
@@ -71,13 +64,6 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 4px;
-}
-
-.osc-row label output,
-.controls output {
-    color: var(--accent);
-    font-family: monospace;
-    font-weight: 600;
 }
 
 .osc-row.disabled {
@@ -132,11 +118,6 @@ input[type="range"]:disabled {
 
 .osc-row.disabled .toggle-btn {
     background: #888;
-}
-
-input[type="range"]:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
 }
 
 .controls label {
@@ -195,7 +176,26 @@ input[type="range"]:disabled {
     border: 1px solid var(--border-color)
 }
 
-.controls output { text-align: right; font-family: monospace; }
+select {
+    padding: 0.4rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
+    color: var(--text-main);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.osc-row label output,
+.controls output {
+    color: var(--accent);
+    font-family: monospace;
+    text-align: right;
+    font-weight: 600;
+}
+
 .visualizer-container {
     display: flex;
     flex-wrap: wrap;
@@ -297,10 +297,9 @@ p {
 
 audio {
     width: 100%;
+    min-height: 40px;
     margin-top: 0.5rem;
     margin-bottom: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 30px;
 }
 
 audio::-webkit-media-controls-panel {
@@ -357,23 +356,14 @@ pre {
 
 #oscillators {
     flex-direction: column; 
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
 .synth-visuals .keyboard {
     display: flex;
     justify-content: center;
     flex-wrap: nowrap;
-}
-
-@media (max-width: 850px) {
-    .synth-layout {
-        grid-template-columns: 1fr;
-    }
-    .synth-visuals {
-        position: static;
-        order: -1;
-        margin-bottom: 2rem;
-    }
 }
 
 /* ==========================================================================
@@ -450,5 +440,57 @@ pre {
     }
     .keyboard {
         margin: 0 auto;
+    }
+}
+
+@media (max-width: 850px) {
+    .synth-layout {
+        grid-template-columns: 1fr;
+    }
+    .synth-visuals {
+        position: static;
+        order: -1;
+        margin-bottom: 2rem;
+    }
+
+    .osc-row {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0.5rem 1rem;
+    }
+
+    .osc-row .toggle-btn {
+        grid-column: span 1;
+        width: 100%;
+        padding: 0.4rem 0;
+    }
+    .osc-row .osc-wave {
+        grid-column: span 2;
+        width: 100%;
+    }
+    .osc-row label:nth-of-type(1) {
+        grid-column: span 3;
+    }
+
+    .osc-row label:nth-of-type(2) {
+        grid-column: span 3;
+    }
+    .osc-row label:nth-of-type(3) {
+        grid-column: span 3;
+    }
+
+    .osc-row label:nth-of-type(4) {
+        grid-column: span 3;
+    }
+    .osc-row label:nth-of-type(5) {
+        grid-column: span 3;
+    }
+
+    .osc-row > div[style*="flex-basis"] {
+        display: none;
+    }
+
+    .osc-row label {
+        min-width: 0;
     }
 }

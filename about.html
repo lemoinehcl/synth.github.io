@@ -14,6 +14,10 @@
         <a href="index.html">Back to Synthesizer</a>
     </div>
 
+    <p>
+        This project uses a hybrid architecture. The Python engine (using <code>music21</code>) handles offline score parsing and batch WAV rendering. The JavaScript engine handles real-time Digital Signal Processing using the Web Audio API, allowing for instant parameter changes and interactivity.
+    </p>
+
     <!-- SECTION 1: OSCILLATORS -->
     <div class="about-grid">
         <div class="about-column text-col">
@@ -55,7 +59,7 @@
             <pre style="overflow-x: auto;"><code>carrier_phase = (2 * π * frequency * time) + (<span style="color:#9467bd">depth</span> * sin(2 * π * (frequency * <span style="color: #d62728">ratio</span>) * time))</code></pre>
             <p>
                 The <span style="color: #d62728">FM Ratio</span> determines the character of the new harmonics. Integer ratios will have the modulating wave finish its cycle at the same time as the carrier wave, producing harmonic sidebands. For non-integer ratios, the modulating wave drifts in and out of sync with the carrier wave, creating inharmonic sidebands. This creates a metallic or chaotic sound.
-                <br><br>The <span style="color:#9467bd">FM Depth</span>  determines how much the carrier wave is impacted. A FM Depth of 1.0-3.0 gently pushes on the carrier wave, causing a more rich tone. At a value between 5.0 and 10.0, the wave is pushed much harder, causing it to run backwards at times. This creates a harsh and noisy sound.
+                <br><br>The <span style="color:#9467bd">FM Depth</span>  determines how much the carrier wave is impacted. A FM Depth of 1.0-3.0 gently pushes on the carrier wave, causing a more rich tone. At a value between 5.0 and 10.0, the wave is pushed much harder, causing it to run backwards at times. This creates a harsh, noisy, or aggressive timbre.
             </p>
         </div>
     </div>
@@ -144,37 +148,58 @@
         <div class="about-column text-col">
             <h2>ADSR Envelope</h2>
             <p>
-                The ADSR Envelope consists of 5 parts:
+                The ADSR Envelope consists of 5 parts:</p>
                 <ul>
                     <li><strong><span style="color: #1f77b4">Attack</span></strong>: Time it takes for the sound to go from 0 to the maximum level</li>
-                    <li><strong><span style="color: #ff7f0e">Decay</span></strong>: Time it takes for the sound to fall from the initial peak to some set level.</li>
+                    <li><strong><span style="color: #ff7f0e">Decay</span></strong>: Time it takes for the sound to fall from the initial peak to the sustain level.</li>
                     <li><strong><span style="color: #2ca02c">Sustain Time</span></strong>: Time the sound is held at a set level.</li>
                     <li><strong><span style="color: #2ca02c">Sustain Level</span></strong>: Amplitude the sound is held at.</li>
                     <li><strong><span style="color: #d62728">Release</span></strong>: Time it takes for the sound to fade to silence.</li>
                 </ul>
-                For real-time keyboard and MIDI playback, the ADSR envelope is handled via a Web Audio GainNode. This allows for polyphony: when multiple keys are pressed, each voice independently scales its volume to prevent digital clipping, using an equal-power scaling formula.
+                <p>For real-time keyboard and MIDI playback, the ADSR envelope is handled via a Web Audio GainNode. This allows for polyphony: when multiple keys are pressed, each voice independently scales its volume to prevent digital clipping, using an equal-power scaling formula.
             </p>
         </div>
     </div>
 
-    <!-- SECTION 5: READ SCORE -->
+    <!-- SECTION 5: PRESETS -->
     <div class="about-grid">
         <div class="about-column text-col">
-            <h2>Score Parsing</h2>
+            <h2>Presets</h2>
             <p>
-                The Python engine uses <code>music21</code> to parse MusicXML (.mxl), Humdrum (.krn), or RomanText (.rntxt) files. It extracts the notes, chords, and rests of the score as well as their start times, durations and dynamics. This can be fed into the ADSR to play full tracks, including complex scores with multiple parts and voices.  
-                <br>The Python script is used to extract sections of the score into .json files to be read by the JavaScript scripts. 
+                Presets are stored in a <code>.json</code> file, which can be read by both the Python engine and the JS engine. The Python engine reads them for rendering offline audio, and the JavaScript engine reads them for real-time playback in the browser.
+                The preset menu dynamically loads the JSON parameters into the Web Audio engine, updating all sliders instantly.
             </p>
         </div>
         <div class="about-column image-col">
             <figure>
+                <img src="images/presets.png" alt="Presets" class="about-img">
+                <figcaption>All available presets at 10 Hz for 1 second</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <!-- SECTION 6: READ SCORE -->
+    <div class="about-grid">
+        <div class="about-column image-col">
+            <figure>
                 <figcaption>Chopin Etude Op. 10, No. 9, using the "EDM" preset</figcaption>
-               <audio controls src="audio/etude-opus-10-no-9-in-f-minor.mp3"></audio>
+                <audio controls src="audio/etude-opus-10-no-9-in-f-minor.mp3"></audio>
             </figure>
             <figure>
                 <figcaption>Liliʻuokalani Aloha ʻOe, using the "Electric Piano" preset</figcaption>
-               <audio controls src="audio/aloha.mp3"></audio>
+                <audio controls src="audio/aloha.mp3"></audio>
             </figure>
+        </div>
+        <div class="about-column text-col">
+            <h2>Score Parsing</h2>
+            <!-- Removed the <p> tag here so the browser doesn't break the layout -->
+            The Python engine uses <code>music21</code> to parse MusicXML (.mxl), Humdrum (.krn), or RomanText (.rntxt) files. 
+            <ul style="margin-top: 1rem;">
+                <li>Extracts notes, chords, and rests with absolute start times and durations.</li>
+                <li>Interpolates crescendos/decrescendos.</li>
+                <li>Handles complex formatting, such as tied notes and hidden padding rests.</li>
+                <li>Outputs a clean JSON file for the JavaScript frontend.</li>
+            </ul>
         </div>
     </div>
 
