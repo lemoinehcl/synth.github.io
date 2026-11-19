@@ -166,8 +166,8 @@
         <div class="about-column text-col">
             <h2>Presets</h2>
             <p>
-                Presets are stored in a <code>.json</code> file, which can be read by both the Python engine and the JS engine. The Python engine reads them for rendering offline audio, and the JavaScript engine reads them for real-time playback in the browser.
-                The preset menu dynamically loads the JSON parameters into the Web Audio engine, updating all sliders instantly.
+                The synthesizer has a variety of presets. All sounds are stored in a shared <code>.json</code> file, allowing the Python engine to render high-fidelity audio offline and the JavaScript engine to play audio in real time, using the same parameters.
+                <br> When a preset is selected in the web app, the JSON data is parsed and injected directly into the Web Audio engine. This instantly updates all oscillator, FM, envelope, and wavefolder sliders in the UI to match the selected sound.
             </p>
         </div>
         <div class="about-column image-col">
@@ -192,9 +192,8 @@
         </div>
         <div class="about-column text-col">
             <h2>Score Parsing</h2>
-            <!-- Removed the <p> tag here so the browser doesn't break the layout -->
-            The Python engine uses <code>music21</code> to parse MusicXML (.mxl), Humdrum (.krn), or RomanText (.rntxt) files. 
-            <ul style="margin-top: 1rem;">
+            <p>The Python engine uses <code>music21</code> to parse MusicXML (.mxl), Humdrum (.krn), or RomanText (.rntxt) files.</p> 
+            <ul>
                 <li>Extracts notes, chords, and rests with absolute start times and durations.</li>
                 <li>Interpolates crescendos/decrescendos.</li>
                 <li>Handles complex formatting, such as tied notes and hidden padding rests.</li>

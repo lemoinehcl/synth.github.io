@@ -176,11 +176,14 @@ NOTES.forEach(n => {
     el.textContent = n;
     el.dataset.note = n;
     
-    el.addEventListener('mousedown', () => {
+        el.addEventListener('mousedown', () => {
         if (!ctx) { 
             alert('Please click "Enable Audio" first!'); 
             return; 
         }
+        // Ensure audio context is awake on every click
+        if (ctx.state === 'suspended') ctx.resume();
+        
         playNote(ctx, noteToHz(n), 1.2, currentPreset, masterGain);
     });
     
@@ -259,6 +262,9 @@ scoreSelect.addEventListener('change', () => {
 
 playBtn.addEventListener('click', async () => {
     if (!ctx) { alert('Click "Enable Audio" first.'); return; }
+    if (ctx.state === 'suspended') {
+        ctx.resume();
+    }
 
     if (isPlaying) {
         stopPlayback();
@@ -276,6 +282,7 @@ playBtn.addEventListener('click', async () => {
         
         const notes = await res.json();
         const t0 = ctx.currentTime + 0.1; 
+        const sampleRate = ctx.sampleRate;
 
         for (const n of notes) {
             const notesToPlay = Array.isArray(n.name) ? n.name : [n.name];
@@ -283,15 +290,15 @@ playBtn.addEventListener('click', async () => {
             
             for (const noteName of notesToPlay) {
                 const freq = noteToHz(noteName);
-                const samples = renderNote(freq, n.dur, currentPreset);
-                const buf = ctx.createBuffer(1, samples.length, 44100);
+                // Use sampleRate here!
+                const samples = renderNote(freq, n.dur, currentPreset, sampleRate); 
+                const buf = ctx.createBuffer(1, samples.length, sampleRate); 
                 buf.copyToChannel(samples, 0);
                 
                 const src = ctx.createBufferSource();
                 src.buffer = buf;
                 
                 const noteGain = ctx.createGain();
-    
                 noteGain.gain.value = 1.0 / Math.sqrt(numNotes); 
                 
                 noteGain.connect(masterGain);
@@ -303,6 +310,7 @@ playBtn.addEventListener('click', async () => {
                 activeSources.push(noteGain);
             }
         }
+
         const lastNote = notes[notes.length - 1];
         const totalDuration = (lastNote.start + lastNote.dur + 1.0) * 1000;
         
@@ -466,12 +474,16 @@ function midiToHz(n) { return 440 * Math.pow(2, (n - 69) / 12); }
 
 function startMidiVoice(noteNumber, velocity) {
     if (!ctx) return;
+    
+    if (ctx.state === 'suspended') ctx.resume();
+
     if (activeVoices[noteNumber]) stopMidiVoice(noteNumber);
     
-    const rawSamples = renderNote(midiToHz(noteNumber), 2.0, currentPreset, 44100, false);
-    const buf = ctx.createBuffer(1, rawSamples.length, 44100);
+    const sampleRate = ctx.sampleRate;
+    const rawSamples = renderNote(midiToHz(noteNumber), 2.0, currentPreset, sampleRate, false);
+    const buf = ctx.createBuffer(1, rawSamples.length, sampleRate);
     buf.copyToChannel(rawSamples, 0);
-    
+        
     const src = ctx.createBufferSource();
     src.buffer = buf;
     
